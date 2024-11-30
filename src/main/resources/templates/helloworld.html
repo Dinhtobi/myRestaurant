@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Form</title>
+</head>
+<body>
+<h1>Hello World</h1>
+<form id="myForm" action="/home/submit" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <button type="submit">Submit</button>
+</form>
+
+<!-- Dialog for Success Message -->
+<dialog id="myDialog">
+    <p id="successMessage"></p>
+    <button onclick="closeDialog()">Close</button>
+</dialog>
+
+<script>
+    // Lấy form và dialog
+    const form = document.getElementById("myForm");
+    const dialog = document.getElementById("myDialog");
+    const successMessage = document.getElementById("successMessage");
+
+    // Hàm đóng dialog
+    function closeDialog() {
+        dialog.close();
+    }
+
+    // Lắng nghe sự kiện submit form
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Ngăn reload trang
+
+        // Thu thập dữ liệu form
+        const formData = new FormData(form);
+
+        // Gửi dữ liệu bằng fetch
+        fetch("/home/submit", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Hiển thị thông báo thành công trong dialog
+                successMessage.textContent = `${data.message} Name: ${data.name}, Email: ${data.email}`;
+                dialog.showModal(); // Hiển thị dialog
+            })
+            .catch((error) => {
+                console.error("Error submitting form:", error);
+            });
+    });
+</script>
+</body>
+</html>
